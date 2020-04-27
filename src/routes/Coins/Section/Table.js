@@ -92,8 +92,8 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(name, calories, fat) {
-  return { name, calories, fat };
+function createData(image, name, calories, fat) {
+  return { image, name, calories, fat };
 }
 
 const useStyles2 = makeStyles({
@@ -119,15 +119,16 @@ export default function CustomPaginationActionsTable({ coins }) {
     // createData("Oreo", 437, 18.0),
   ].sort((a, b) => (a.calories < b.calories ? -1 : 1));
 
-  console.log(coins.id);
-  coins.map((coin, index) => rows.push(createData(coin.id, coin.symbol, 24)));
-  //   rows.push(createData(`${coins.id}`, 30, 24));
+  console.log(coins);
+  coins.map((coin) =>
+    rows.push(createData(coin.image, coin.id, coin.symbol, 24))
+  );
 
   console.log(rows);
 
   const classes = useStyles2();
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(15);
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -150,7 +151,16 @@ export default function CustomPaginationActionsTable({ coins }) {
             : rows
           ).map((row) => (
             <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
+              <TableCell
+                component="th"
+                scope="row"
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                <img
+                  src={`${row.image}`}
+                  alt={`${row.name}`}
+                  style={{ width: "25px", marginRight: "5px" }}
+                />
                 {row.name}
               </TableCell>
               <TableCell align="right">{row.calories}</TableCell>
@@ -167,7 +177,7 @@ export default function CustomPaginationActionsTable({ coins }) {
         <TableFooter>
           <TableRow>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+              rowsPerPageOptions={[5, 15, 25, { label: "All", value: -1 }]}
               colSpan={3}
               count={rows.length}
               rowsPerPage={rowsPerPage}
