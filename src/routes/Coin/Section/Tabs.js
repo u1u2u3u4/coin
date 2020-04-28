@@ -87,8 +87,12 @@ function SimpleTabs({
         </div>
         <div>
           자세한 정보는{" "}
-          <a href={`${homepage}`} target="_blank" rel="noopener noreferrer">
-            {homepage}
+          <a
+            href={homepage && `${homepage[0]}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {homepage && homepage[0]}
           </a>
           에서 확인할 수 있습니다.
         </div>
