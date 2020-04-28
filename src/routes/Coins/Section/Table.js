@@ -1,5 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
+
+// Material UI
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -8,12 +12,19 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableFooter from "@material-ui/core/TableFooter";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
+import TableHead from "@material-ui/core/TableHead";
 import Paper from "@material-ui/core/Paper";
 import IconButton from "@material-ui/core/IconButton";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
+
+const Mobile = styled.span`
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
 
 const useStyles1 = makeStyles((theme) => ({
   root: {
@@ -92,8 +103,24 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-function createData(image, name, calories, fat) {
-  return { image, name, calories, fat };
+function createData(
+  rank,
+  image,
+  name,
+  symbol,
+  current_price,
+  price_change_percentage_24h,
+  market_cap
+) {
+  return {
+    rank,
+    image,
+    name,
+    symbol,
+    current_price,
+    price_change_percentage_24h,
+    market_cap,
+  };
 }
 
 const useStyles2 = makeStyles({
@@ -103,28 +130,21 @@ const useStyles2 = makeStyles({
 });
 
 export default function CustomPaginationActionsTable({ coins }) {
-  const rows = [
-    // createData("Cupcake", 305, 3.7),
-    // createData("Donut", 452, 25.0),
-    // createData("Eclair", 262, 16.0),
-    // createData("Frozen yoghurt", 159, 6.0),
-    // createData("Gingerbread", 356, 16.0),
-    // createData("Honeycomb", 408, 3.2),
-    // createData("Ice cream sandwich", 237, 9.0),
-    // createData("Jelly Bean", 375, 0.0),
-    // createData("KitKat", 518, 26.0),
-    // createData("Lollipop", 392, 0.2),
-    // createData("Marshmallow", 318, 0),
-    // createData("Nougat", 360, 19.0),
-    // createData("Oreo", 437, 18.0),
-  ].sort((a, b) => (a.calories < b.calories ? -1 : 1));
+  const rows = []; //.sort((a, b) => (a.calories < b.calories ? -1 : 1));
 
-  console.log(coins);
   coins.map((coin) =>
-    rows.push(createData(coin.image, coin.id, coin.symbol, 24))
+    rows.push(
+      createData(
+        coin.market_cap_rank,
+        coin.image,
+        coin.name,
+        coin.symbol,
+        coin.current_price,
+        coin.price_change_percentage_24h,
+        coin.market_cap
+      )
+    )
   );
-
-  console.log(rows);
 
   const classes = useStyles2();
   const [page, setPage] = React.useState(0);
@@ -145,26 +165,54 @@ export default function CustomPaginationActionsTable({ coins }) {
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="custom pagination table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Rank</TableCell>
+            <TableCell>Coin</TableCell>
+            <TableCell></TableCell>
+            <TableCell align="right">Price</TableCell>
+            <TableCell align="right">24시간</TableCell>
+            <TableCell align="right">시가총액</TableCell>
+          </TableRow>
+        </TableHead>
+
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : rows
           ).map((row) => (
             <TableRow key={row.name}>
-              <TableCell
-                component="th"
-                scope="row"
-                style={{ display: "flex", alignItems: "center" }}
-              >
+              <TableCell>{row.rank}</TableCell>
+              <TableCell align="left" component="th" scope="row">
                 <img
                   src={`${row.image}`}
                   alt={`${row.name}`}
-                  style={{ width: "25px", marginRight: "5px" }}
+                  style={{
+                    width: "25px",
+                    marginRight: "5px",
+                    verticalAlign: "middle",
+                  }}
                 />
-                {row.name}
+                <Link>
+                  <Mobile>{row.name}</Mobile>
+                </Link>
               </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
+              <TableCell>{row.symbol.toUpperCase()}</TableCell>
+              <TableCell align="right">₩{row.current_price}</TableCell>
+              <TableCell
+                align="right"
+                style={
+                  row.price_change_percentage_24h > 0
+                    ? { color: "red" }
+                    : { color: "blue" }
+                }
+              >
+                {row.price_change_percentage_24h > 0
+                  ? `↑${row.price_change_percentage_24h}`
+                  : `↓${row.price_change_percentage_24h}`}
+                %
+              </TableCell>
+              <TableCell align="right">₩{row.market_cap}</TableCell>
             </TableRow>
           ))}
 

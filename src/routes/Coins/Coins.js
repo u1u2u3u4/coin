@@ -13,7 +13,6 @@ function Coins() {
         `${BASE_URL}/coins/markets?vs_currency=krw&order=market_cap_desc&per_page=100&page`
       )
       .then((response) => {
-        // console.log(response.data);
         setCoins(response.data);
       });
   }, []);
