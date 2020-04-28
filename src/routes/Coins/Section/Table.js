@@ -104,6 +104,7 @@ TablePaginationActions.propTypes = {
 };
 
 function createData(
+  id,
   rank,
   image,
   name,
@@ -113,6 +114,7 @@ function createData(
   market_cap
 ) {
   return {
+    id,
     rank,
     image,
     name,
@@ -135,6 +137,7 @@ export default function CustomPaginationActionsTable({ coins }) {
   coins.map((coin) =>
     rows.push(
       createData(
+        coin.id,
         coin.market_cap_rank,
         coin.image,
         coin.name,
@@ -193,11 +196,13 @@ export default function CustomPaginationActionsTable({ coins }) {
                     verticalAlign: "middle",
                   }}
                 />
-                <Link>
+                <Link to={`${row.id}`}>
                   <Mobile>{row.name}</Mobile>
                 </Link>
               </TableCell>
-              <TableCell>{row.symbol.toUpperCase()}</TableCell>
+              <TableCell>
+                <Link to={`${row.id}`}>{row.symbol.toUpperCase()}</Link>
+              </TableCell>
               <TableCell align="right">₩{row.current_price}</TableCell>
               <TableCell
                 align="right"
@@ -226,7 +231,7 @@ export default function CustomPaginationActionsTable({ coins }) {
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[5, 15, 25, { label: "All", value: -1 }]}
-              colSpan={3}
+              colSpan={6}
               count={rows.length}
               rowsPerPage={rowsPerPage}
               page={page}
